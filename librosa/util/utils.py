@@ -2666,7 +2666,7 @@ def frequency_range(instr, fundamental):
     }
     
     instr = instr.lower()
-    instr_categories = [category for category in ranges.keys()
+    instr_categories = [category for category in ranges.keys()]
     if instr_categories:
         instr_category = instr_categories[0]
         if instr_category != 'voice':
