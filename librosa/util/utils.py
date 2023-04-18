@@ -2607,7 +2607,7 @@ def phasor(
     return z  # type: ignore
 
 
-def frequency_range(instr):
+def frequency_range(instr, fundamental):
     ranges = {
         'strings': {
             'violin': [196.0, 1661.2],
@@ -2658,18 +2658,50 @@ def frequency_range(instr):
             'tenor': [130.8, 698.5],
             'alto': [196.0, 1046.5],
             'soprano': [261.6, 1318.5]
+        },
+        'partials': {
+            'cymbals': [100.0, 15000.0],
+            'telephone': [300.0, 3400.0]
         }
     }
+    
     instr = instr.lower()
-    instr_categories = [category for category in ranges.keys() if instr in category or instr == category[:-1]]
+    instr_categories = [category for category in ranges.keys()
     if instr_categories:
         instr_category = instr_categories[0]
         if instr_category != 'voice':
             instr_subcategories = [subcat for subcat in ranges[instr_category].keys() if instr == subcat or instr in subcat.split()]
             if instr_subcategories:
                 instr_subcategory = instr_subcategories[0]
-                print(f"{instr_subcategory.capitalize()} {instr_category.capitalize()} range: {ranges[instr_category][instr_subcategory][0]} Hz - {ranges[instr_category][instr_subcategory][1]} Hz")
-                return ranges
+                if fundamental:
+                    print(f"{instr_subcategory.capitalize()} {instr_category.capitalize()} fundamental frequency range: {ranges[instr_category][instr_subcategory][0]} Hz - {ranges[instr_category][instr_subcategory][1]} Hz")
+                    return ranges[instr_category][instr_subcategory]
+                else:
+                    nyquist = 22050  # default sampling rate
+                    max_partial = nyquist / ranges[instr_category][instr_subcategory][0]
+                    print(f"{instr_subcategory.capitalize()} {instr_category.capitalize()} partial frequency range: {ranges[instr_category][instr_subcategory][0]} Hz - {max_partial:.2f} Hz")
+                    return [ranges[instr_category][instr_subcategory][0], max_partial]
+        else:
+            if instr == 'human voice':
+                print(f"Human voice frequency range: {ranges[instr_category]['human voice'][0]} Hz - {ranges[instr_category]['human voice'][1]} Hz")
+                return ranges[instr_category]['human voice']
+            else:
+                print(f"Invalid instrument or category. Please enter a valid query.")
+                return None
+    else:
+        if instr in ranges['partials']:
+            if fundamental:
+                print(f"{instr.capitalize()} partial frequency range: {ranges['partials'][instr][0]} Hz - {ranges['partials'][instr][1]} Hz")
+                return ranges['partials'][instr]
+            else:
+                nyquist = 22050  # default sampling rate
+                max_partial = nyquist / ranges['partials'][instr][0]
+                print(f"{instr.capitalize()} partial frequency range: {ranges['partials'][instr][0]} Hz - {max_partial:.2f} Hz")
+                return [ranges['partials'][instr][0], max_partial]
+        else:
+            print(f"Invalid instrument or category. Please enter a valid query.")
+            return None
+
 
 def list_frequency_range():
     print("Valid instrument and category queries for the frequency_range function:")
@@ -2679,3 +2711,5 @@ def list_frequency_range():
     print("- Percussion: drums, xylophone, marimba, vibraphone, steel drums, timpani, snare drum")
     print("- Keyboard: piano, organ, harpsichord")
     print("- Voice: human voice, bass, baritone, tenor, alto, soprano")
+    print("- Partials: cymbals, telephone")
+    print("\nNote: For pitched sources, 'fundamental' frequencies correspond to the lowest frequency of the harmonic series. For non-pitched sources, 'fundamental' frequencies refer to the lowest frequency component in the frequency spectrum.")
