@@ -2652,7 +2652,12 @@ def frequency_range(instr):
             'harpsichord': [27.5, 3729.3]
         },
         'voice': {
-            'human voice': [85.0, 1100.0]
+            'human voice': [85.0, 1100.0],
+            'bass': [85.0, 220.0],
+            'baritone': [110.0, 466.2],
+            'tenor': [130.8, 698.5],
+            'alto': [196.0, 1046.5],
+            'soprano': [261.6, 1318.5]
         }
     }
     instr = instr.lower()
@@ -2665,3 +2670,12 @@ def frequency_range(instr):
                 instr_subcategory = instr_subcategories[0]
                 print(f"{instr_subcategory.capitalize()} {instr_category.capitalize()} range: {ranges[instr_category][instr_subcategory][0]} Hz - {ranges[instr_category][instr_subcategory][1]} Hz")
                 return ranges
+
+def list_frequency_range():
+    print("Valid instrument and category queries for the frequency_range function:")
+    print("- Strings: violin, cello, double bass, guitar, ukulele, mandolin, sitar, harp, oud, tambura, shanai, banjo")
+    print("- Woodwinds: flute, saxophone, clarinet, bassoon, oboe, bagpipes")
+    print("- Brass: trumpet, trombone, french horn, tuba")
+    print("- Percussion: drums, xylophone, marimba, vibraphone, steel drums, timpani, snare drum")
+    print("- Keyboard: piano, organ, harpsichord")
+    print("- Voice: human voice, bass, baritone, tenor, alto, soprano")
