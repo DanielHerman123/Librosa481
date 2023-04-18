@@ -2608,6 +2608,8 @@ def phasor(
 
 
 def frequency_range(instr, fundamental):
+    """Function that gives different instrument ranges based on fundamentals."""
+
     if not isinstance(instr, str):
         instr = str(instr)
     ranges = {
@@ -2701,6 +2703,8 @@ def frequency_range(instr, fundamental):
 
 
 def list_frequency_range():
+    """Helper function for the frequency_range function."""
+
     print("Valid instrument and category queries for the frequency_range function:")
     print("- Strings: violin, cello, double bass, guitar, ukulele, mandolin, sitar, harp, oud, tambura, shanai, banjo")
     print("- Woodwinds: flute, saxophone, clarinet, bassoon, oboe, bagpipes")
@@ -2709,4 +2713,6 @@ def list_frequency_range():
     print("- Keyboard: piano, organ, harpsichord")
     print("- Voice: human voice, bass, baritone, tenor, alto, soprano")
     print("- Partials: cymbals, telephone")
-    print("\nNote: For pitched sources, 'fundamental' frequencies correspond to the lowest frequency of the harmonic series. For non-pitched sources, 'fundamental' frequencies refer to the lowest frequency component in the frequency spectrum.")
+    print("\nNote: For pitched sources, 'fundamental' frequencies correspond to the lowest frequency of")
+    print("the harmonic series. For non-pitched sources, 'fundamental' frequencies refer to the lowest")
+    print("frequency component in the frequency spectrum.")
