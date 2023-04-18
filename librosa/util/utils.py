@@ -2608,6 +2608,8 @@ def phasor(
 
 
 def frequency_range(instr, fundamental):
+    if not isinstance(instr, str):
+        instr = str(instr)
     ranges = {
         'strings': {
             'violin': [196.0, 1661.2],
@@ -2647,7 +2649,7 @@ def frequency_range(instr, fundamental):
             'snare drum': [60.0, 1500.0]
         },
         'keyboard': {
-            'piano': [27.5, 4186],
+            'piano': [27.5, 4186.0],
             'organ': [27.5, 4200.0],
             'harpsichord': [27.5, 3729.3]
         },
@@ -2666,46 +2668,32 @@ def frequency_range(instr, fundamental):
     }
     
     instr = instr.lower()
-    instr_categories = [category for category in ranges.keys()]
+    instr_categories = [category for category in ranges.keys() if instr in ranges[category]]
     if instr_categories:
         instr_category = instr_categories[0]
-        if instr_category != 'voice':
-            instr_subcategories = [subcat for subcat in ranges[instr_category].keys() if instr == subcat or instr in subcat.split()]
-            if instr_subcategories:
-                instr_subcategory = instr_subcategories[0]
-                if fundamental:
-                    print(f"{instr_subcategory.capitalize()} {instr_category.capitalize()} fundamental frequency range: {ranges[instr_category][instr_subcategory][0]} Hz - {ranges[instr_category][instr_subcategory][1]} Hz")
-                    return ranges[instr_category][instr_subcategory]
-                else:
-                    nyquist = 22050  # default sampling rate
-                    max_partial = nyquist / ranges[instr_category][instr_subcategory][0]
-                    print(f"{instr_subcategory.capitalize()} {instr_category.capitalize()} partial frequency range: {ranges[instr_category][instr_subcategory][0]} Hz - {max_partial:.2f} Hz")
-                    return [ranges[instr_category][instr_subcategory][0], max_partial]
-        else:
-            instr_subcategories = [subcat for subcat in ranges[instr_category].keys() if instr == subcat or instr in subcat.split()]
-            if instr_subcategories:
-                instr_subcategory = instr_subcategories[0]
-                if fundamental:
-                    print(f"{instr_subcategory.capitalize()} frequency range: {ranges[instr_category][instr_subcategory][0]} Hz - {ranges[instr_category][instr_subcategory][1]} Hz")
-                    return ranges[instr_category][instr_subcategory]
-                else:
-                    nyquist = 22050  # default sampling rate
-                    max_partial = nyquist / ranges[instr_category][instr_subcategory][0]
-                    print(f"{instr_subcategory.capitalize()} partial frequency range: {ranges[instr_category][instr_subcategory][0]} Hz - {max_partial:.2f} Hz")
-                    return [ranges[instr_category][instr_subcategory][0], max_partial]
+        instr_subcategories = [subcat for subcat in ranges[instr_category].keys() if instr == subcat or instr in subcat.split()]
+        if instr_subcategories:
+            instr_subcategory = instr_subcategories[0]
+            prefix = f"{instr_subcategory.capitalize()} {instr_category.capitalize()}" if instr_category != 'voice' else f"{instr_subcategory.capitalize()}"
+            if fundamental:
+                print(f"{prefix} fundamental frequency range: {ranges[instr_category][instr_subcategory][0]} Hz - {ranges[instr_category][instr_subcategory][1]} Hz")
             else:
-                print(f"Invalid instrument or category. Please enter a valid query.")
-                return None
+                nyquist = 22050  # default sampling rate
+                max_partial = nyquist / ranges[instr_category][instr_subcategory][0]
+                print(f"{prefix} partial frequency range: {ranges[instr_category][instr_subcategory][0]} Hz - {max_partial:.2f} Hz")
+            return ranges[instr_category][instr_subcategory]
+        else:
+            print(f"Invalid instrument or category. Please enter a valid query.")
+            return None
     else:
         if instr in ranges['partials']:
             if fundamental:
                 print(f"{instr.capitalize()} partial frequency range: {ranges['partials'][instr][0]} Hz - {ranges['partials'][instr][1]} Hz")
-                return ranges['partials'][instr]
             else:
                 nyquist = 22050  # default sampling rate
                 max_partial = nyquist / ranges['partials'][instr][0]
                 print(f"{instr.capitalize()} partial frequency range: {ranges['partials'][instr][0]} Hz - {max_partial:.2f} Hz")
-                return [ranges['partials'][instr][0], max_partial]
+            return ranges['partials'][instr]
         else:
             print(f"Invalid instrument or category. Please enter a valid query.")
             return None
