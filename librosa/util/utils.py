@@ -2605,3 +2605,63 @@ def phasor(
         z *= mag
 
     return z  # type: ignore
+
+
+def frequency_range(instr):
+    ranges = {
+        'strings': {
+            'violin': [196.0, 1661.2],
+            'cello': [65.4, 987.8],
+            'double bass': [41.2, 277.2],
+            'guitar': [82.4, 1318.5],
+            'ukulele': [196.0, 1046.5],
+            'mandolin': [82.4, 1567.9],
+            'sitar': [82.4, 880.0],
+            'harp': [27.5, 1864.7],
+            'oud': [164.8, 698.5],
+            'tambura': [65.4, 523.3],
+            'shanai': [261.6, 1174.7],
+            'banjo': [82.4, 1046.5]
+        },
+        'woodwinds': {
+            'flute': [261.6, 2093.0],
+            'saxophone': [123.5, 1567.9],
+            'clarinet': [130.8, 1760.0],
+            'bassoon': [55.0, 987.8],
+            'oboe': [65.4, 1318.5],
+            'bagpipes': [220.0, 1567.9]
+        },
+        'brass': {
+            'trumpet': [130.8, 1174.7],
+            'trombone': [82.4, 1046.5],
+            'french horn': [82.4, 1396.9],
+            'tuba': [27.5, 220.0]
+        },
+        'percussion': {
+            'drums': [20.0, 16000.0],
+            'xylophone': [27.5, 2349.3],
+            'marimba': [27.5, 1760.0],
+            'vibraphone': [55.0, 1760.0],
+            'steel drums': [261.6, 2093.0],
+            'timpani': [31.0, 1975.5],
+            'snare drum': [60.0, 1500.0]
+        },
+        'keyboard': {
+            'piano': [27.5, 4186],
+            'organ': [27.5, 4200.0],
+            'harpsichord': [27.5, 3729.3]
+        },
+        'voice': {
+            'human voice': [85.0, 1100.0]
+        }
+    }
+    instr = instr.lower()
+    instr_categories = [category for category in ranges.keys() if instr in category or instr == category[:-1]]
+    if instr_categories:
+        instr_category = instr_categories[0]
+        if instr_category != 'voice':
+            instr_subcategories = [subcat for subcat in ranges[instr_category].keys() if instr == subcat or instr in subcat.split()]
+            if instr_subcategories:
+                instr_subcategory = instr_subcategories[0]
+                print(f"{instr_subcategory.capitalize()} {instr_category.capitalize()} range: {ranges[instr_category][instr_subcategory][0]} Hz - {ranges[instr_category][instr_subcategory][1]} Hz")
+                return ranges
